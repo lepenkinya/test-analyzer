@@ -94,7 +94,7 @@ private fun writeToFiles(buckets: List<List<TestData>>) {
     buckets.forEach {
         val file = File("result/$i")
         it.forEach {
-            file.appendText("$it.name||")
+            file.appendText("${it.name}||")
         }
 
         val executionTime = it.sumBy { it.duration }.millisToMinutes()
