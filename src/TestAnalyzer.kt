@@ -22,7 +22,12 @@ fun extractTeamCityReportData(fileName: String): List<TeamCityReportData> {
             }
             .filterNot { it.startsWith("_") }
             .map {
-                val (name, result, time) = extractTestData(it)
+                var (name, result, time) = extractTestData(it)
+                val innerClass = name.indexOf("$")
+                if (innerClass > 0) {
+                    name = name.substring(0, innerClass)
+                }
+
                 TeamCityReportData(name, result.equals("OK"), time.toInt())
             }
 }
