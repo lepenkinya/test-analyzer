@@ -23,9 +23,8 @@ fun extractTeamCityReportData(fileName: String): List<TeamCityReportData> {
             .filterNot { it.startsWith("_") }
             .map {
                 var (name, result, time) = extractTestData(it)
-                val innerClass = name.indexOf("$")
-                if (innerClass > 0) {
-                    name = name.substring(0, innerClass)
+                if (name.contains("$")) {
+                    name = name.substringBefore("$")
                 }
 
                 TeamCityReportData(name, result.equals("OK"), time.toInt())
@@ -75,9 +74,7 @@ fun convertToTestData(tcReports: List<TeamCityReportData>): List<TestData> {
     val testData: MutableList<TestData> = arrayListOf()
 
     tcReports.map {
-        val fullTestName = it.fullTestName
-        val lastDot = fullTestName.lastIndexOf(".")
-        val className = fullTestName.substring(0, lastDot)
+        val className = extractTestClassName(it.fullTestName)
         TeamCityReportData(className, it.success, it.time)
     }.forEach {
         if (testData.isEmpty() || !it.fullTestName.equals(testData.last().name)) {
@@ -89,6 +86,17 @@ fun convertToTestData(tcReports: List<TeamCityReportData>): List<TestData> {
     }
 
     return testData
+}
+
+fun extractTestClassName(fullTestName: String): String {
+    var dot = fullTestName.indexOf(".")
+
+    while (fullTestName.charAt(dot + 1).isLowerCase()) {
+        dot = fullTestName.indexOf(".", dot + 1)
+    }
+
+    val nextDot = fullTestName.indexOf(".", dot + 1)
+    return fullTestName.substring(0, if (nextDot > 0) nextDot else fullTestName.length())
 }
 
 private fun writeToFiles(buckets: List<List<TestData>>) {
