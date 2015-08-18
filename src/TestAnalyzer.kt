@@ -53,20 +53,16 @@ fun extractTestData(data: String): Triple<String, String, String> {
 
 
 fun main(args: Array<String>) {
-    val tcReports = extractTeamCityReportData("AllTests.csv")
+    val testData = convertToTestData(extractTeamCityReportData("AllTests.csv"))
 
-    val testData = convertToTestData(tcReports)
-
-    val totalTime = tcReports.sumBy { it.time }
     val newTotalTime = testData.sumBy { it.duration }
-
 
     val buckets = distributeToBuckets(4, testData)
 
     writeToFiles(buckets)
 
-    println ("Total ${totalTime.millisToMinutes() / 60} h")
-    println ("Total ${newTotalTime.millisToMinutes() / 60} h")
+    println("Total ${newTotalTime.millisToMinutes() / 60} h")
+    println("Total tests ${extractTeamCityReportData("AllTests.csv").size()}")
 }
 
 fun convertToTestData(tcReports: List<TeamCityReportData>): List<TestData> {
