@@ -61,7 +61,8 @@ fun main(args: Array<String>) {
 
     writeToFiles(buckets)
 
-    println("Total ${newTotalTime.millisToMinutes() / 60} h")
+    println("Total execution time ${newTotalTime.millisToMinutes() / 60} h")
+    println("Total test classes: ${testData.size()}")
     println("Total tests ${extractTeamCityReportData("AllTests.csv").size()}")
 }
 
