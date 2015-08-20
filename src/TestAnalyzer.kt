@@ -103,9 +103,12 @@ private fun writeToFiles(buckets: List<List<TestData>>) {
 
     buckets.forEach {
         val file = File("result/$i")
+        var runConfigurationPatternFile = File("result/${i}_pattern")
+
         file.appendText("\n\n")
         it.forEach {
             file.appendText("${it.name}\n")
+            runConfigurationPatternFile.appendText("${it.name}||")
         }
 
         val executionTime = it.sumBy { it.duration }.millisToMinutes()
