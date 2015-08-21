@@ -52,12 +52,34 @@ fun extractTestData(data: String): Triple<String, String, String> {
 }
 
 
+fun readAllTestsData(fileName: String): Set<String> {
+    val file = File(fileName)
+    val lines = file.readLines()
+    println("Total lines ${lines.size()}")
+
+    return lines.map { it.splitBy(" ").get(1) }.toSet()
+}
+
+
 fun main(args: Array<String>) {
+
+    val allTests = readAllTestsData("xxx.txt")
+
     val testData = convertToTestData(extractTeamCityReportData("AllTests.csv"))
 
-    val newTotalTime = testData.sumBy { it.duration }
 
-    val buckets = distributeToBuckets(4, testData)
+    val perforceSkip = testData.filter { it.name.contains("Perforce") }
+    val notFoundTestSkipTime = testData.filterNot { allTests.contains(it.name) }
+
+    println("Perforce skip time: ${perforceSkip.sumBy { it.duration }.toDouble() / 1000 / 60}")
+    println("Not found test skip time: ${notFoundTestSkipTime.sumBy { it.duration }.toDouble() / 1000 / 60}")
+
+
+    val dataToTest = testData.filterNot { it.name.contains("perforce") }.filter { allTests.contains(it.name) }
+
+    val newTotalTime = dataToTest.sumBy { it.duration }
+
+    val buckets = distributeToBuckets(15, dataToTest)
 
     writeToFiles(buckets)
 
